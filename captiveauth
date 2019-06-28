@@ -1,4 +1,6 @@
 #!/bin/bash
+# created by Naoki Nakamura <agent@sohzoh.com>
+# the code is under MIT license
 
 if [ $# -eq 0 ]
 then
