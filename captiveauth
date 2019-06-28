@@ -1,0 +1,24 @@
+#!/bin/bash
+
+if [ $# -eq 0 ]
+then
+  network="Wi-Fi"
+else
+  network=$1  
+fi
+
+services=$(/usr/sbin/networksetup -listallnetworkservices | /usr/bin/tail -n +2)
+# TODO: check network name existence
+
+/bin/echo "Using: $network" $'\n'
+dnsservers=$(/usr/sbin/networksetup -getdnsservers $network)
+/bin/echo "Current DNS:"
+/bin/echo $dnsservers
+trap '/bin/echo && /bin/echo "settings restored."  && /usr/sbin/networksetup -setdnsservers Wi-Fi $dnsservers && exit 0' 2
+
+/usr/sbin/networksetup -setdnsservers Wi-Fi empty
+/bin/echo "DNS on $network set to empty. After authenticating, press Ctrl-C to set DNS localhost."
+/usr/bin/open http://captive.apple.com/
+/bin/sleep 120
+/bin/echo "Timeout. setting DNS on Wi-Fi to localhost."
+/usr/sbin/networksetup -setdnsservers Wi-Fi $dnsservers
